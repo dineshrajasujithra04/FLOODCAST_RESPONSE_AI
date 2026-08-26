@@ -1,0 +1,34 @@
+FLOODCAST RESPONSE AI
+DATASET PLAN
+
+FEATURES
+
+1. Flood Severity
+2. Flood Depth
+3. Population Density
+4. Vulnerability
+5. Critical Infrastructure
+6. Road Accessibility
+
+TARGET / OUTPUT
+
+Impact Score: 0–100
+
+Priority:
+LOW
+MEDIUM
+HIGH
+CRITICAL
+
+RESPONSE OUTPUT
+
+WHO
+WHERE
+PRIORITY
+
+RESOURCE TYPES
+
+1. Ambulance
+2. Rescue Boat
+3. Rescue Personnel
+4. Emergency Shelter

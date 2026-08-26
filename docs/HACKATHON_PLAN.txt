@@ -1,0 +1,50 @@
+FLOODCAST RESPONSE AI
+HACKATHON DEVELOPMENT PLAN
+
+HOUR 1–2
+Dataset + Preprocessing
+
+HOUR 2–4
+ML Model + Impact Scoring
+
+HOUR 4–6
+Dashboard + Risk Map
+
+HOUR 6–8
+Integration + Demo
+
+
+CORE MVP
+
+Input Flood Data
+        ↓
+Data Processing
+        ↓
+ML Model
+        ↓
+Impact Score
+        ↓
+Zone Priority
+        ↓
+Resource Recommendation
+        ↓
+Dashboard
+
+
+OPTIONAL FEATURE
+
+Road Blocked
+        ↓
+Recalculate Priority
+        ↓
+New Resource Plan
+
+
+TECHNOLOGY
+
+Python
+Pandas
+Scikit-learn
+FastAPI
+React
+GIS
