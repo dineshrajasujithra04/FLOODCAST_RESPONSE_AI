@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FloodCast Response AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <div>
+                <h1>🌊 FloodCast Response AI</h1>
+                <p>AI-Powered Flood Impact Assessment & Emergency Response</p>
+            </div>
+
+            <div class="status">
+                ● SYSTEM ONLINE
+            </div>
+        </header>
+
+
+        <main>
+
+            <!-- INPUT SECTION -->
+            <section class="card">
+
+                <h2>📍 Flood Zone Assessment</h2>
+
+                <div class="form-grid">
+
+                    <div class="input-group">
+                        <label>Zone Name</label>
+                        <input
+                            type="text"
+                            id="zone"
+                            value="Zone A"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label>Flood Severity (0-100)</label>
+                        <input
+                            type="number"
+                            id="flood_severity"
+                            min="0"
+                            max="100"
+                            value="90"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label>Flood Depth (0-100)</label>
+                        <input
+                            type="number"
+                            id="flood_depth"
+                            min="0"
+                            max="100"
+                            value="80"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label>Population Density (0-100)</label>
+                        <input
+                            type="number"
+                            id="population_density"
+                            min="0"
+                            max="100"
+                            value="85"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label>Vulnerability (0-100)</label>
+                        <input
+                            type="number"
+                            id="vulnerability"
+                            min="0"
+                            max="100"
+                            value="90"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label>Critical Infrastructure (0-100)</label>
+                        <input
+                            type="number"
+                            id="critical_infrastructure"
+                            min="0"
+                            max="100"
+                            value="80"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label>Road Accessibility (0-100)</label>
+                        <input
+                            type="number"
+                            id="road_accessibility"
+                            min="0"
+                            max="100"
+                            value="30"
+                        >
+                    </div>
+
+                </div>
+
+                <button id="analyzeBtn">
+                    🔍 ANALYZE FLOOD
+                </button>
+
+                <p id="errorMessage"></p>
+
+            </section>
+
+
+            <!-- RESULT SECTION -->
+            <section id="resultSection" class="result-section hidden">
+
+                <div class="score-card">
+
+                    <h3>IMPACT SCORE</h3>
+
+                    <div id="impactScore">
+                        0
+                    </div>
+
+                    <div>/ 100</div>
+
+                </div>
+
+
+                <div class="priority-card">
+
+                    <h3>ZONE PRIORITY</h3>
+
+                    <div id="priority">
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h2>🧠 Why This Priority?</h2>
+
+                    <ul id="explanation">
+                    </ul>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h2>🚑 Recommended Emergency Response</h2>
+
+                    <div class="resources">
+
+                        <div class="resource">
+                            <span>🚑 Ambulance</span>
+                            <strong id="ambulance">0</strong>
+                        </div>
+
+                        <div class="resource">
+                            <span>🚤 Rescue Boat</span>
+                            <strong id="rescueBoat">0</strong>
+                        </div>
+
+                        <div class="resource">
+                            <span>👥 Rescue Personnel</span>
+                            <strong id="personnel">0</strong>
+                        </div>
+
+                        <div class="resource">
+                            <span>🏠 Emergency Shelter</span>
+                            <strong id="shelter">-</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <footer>
+            FloodCast Response AI • Round 1 Prototype
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

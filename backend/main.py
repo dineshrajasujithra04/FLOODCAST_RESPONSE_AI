@@ -1,0 +1,209 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import uvicorn
+
+
+# ==========================================
+# FASTAPI APPLICATION
+# ==========================================
+
+app = FastAPI(
+    title="FloodCast Response AI",
+    description="AI-powered flood impact assessment and emergency resource recommendation",
+    version="1.0.0"
+)
+
+
+# ==========================================
+# CORS CONFIGURATION
+# ==========================================
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "null",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:5501",
+        "http://127.0.0.1:5501",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ==========================================
+# INPUT MODEL
+# ==========================================
+
+class FloodInput(BaseModel):
+    zone: str
+    flood_severity: float
+    flood_depth: float
+    population_density: float
+    vulnerability: float
+    critical_infrastructure: float
+    road_accessibility: float
+
+
+# ==========================================
+# FLOOD IMPACT CALCULATION
+# ==========================================
+
+def calculate_impact(data: FloodInput):
+
+    # Convert accessibility into road risk
+    road_risk = 100 - data.road_accessibility
+
+    # Calculate weighted impact score
+    impact_score = (
+        data.flood_severity * 0.25
+        + data.flood_depth * 0.20
+        + data.population_density * 0.15
+        + data.vulnerability * 0.15
+        + data.critical_infrastructure * 0.15
+        + road_risk * 0.10
+    )
+
+    # Keep score between 0 and 100
+    impact_score = round(
+        max(0, min(100, impact_score)),
+        2
+    )
+
+
+    # ==========================================
+    # PRIORITY CLASSIFICATION
+    # ==========================================
+
+    if impact_score <= 40:
+        priority = "LOW"
+
+    elif impact_score <= 60:
+        priority = "MEDIUM"
+
+    elif impact_score <= 80:
+        priority = "HIGH"
+
+    else:
+        priority = "CRITICAL"
+
+
+    # ==========================================
+    # EXPLANATION / REASONS
+    # ==========================================
+
+    reasons = []
+
+    if data.flood_severity >= 70:
+        reasons.append("High flood severity")
+
+    if data.flood_depth >= 70:
+        reasons.append("High flood depth")
+
+    if data.population_density >= 70:
+        reasons.append("High population density")
+
+    if data.vulnerability >= 70:
+        reasons.append("High population vulnerability")
+
+    if data.critical_infrastructure >= 70:
+        reasons.append("Critical infrastructure affected")
+
+    if data.road_accessibility <= 40:
+        reasons.append("Poor road accessibility")
+
+
+    # If no major risk was detected
+    if not reasons:
+        reasons.append(
+            "Flood conditions are currently moderate"
+        )
+
+
+    # ==========================================
+    # RESOURCE RECOMMENDATION
+    # ==========================================
+
+    if priority == "CRITICAL":
+
+        resources = {
+            "ambulance": 1,
+            "rescue_boat": 1,
+            "rescue_personnel": 5,
+            "emergency_shelter": True
+        }
+
+    elif priority == "HIGH":
+
+        resources = {
+            "ambulance": 1,
+            "rescue_boat": 1,
+            "rescue_personnel": 3,
+            "emergency_shelter": True
+        }
+
+    elif priority == "MEDIUM":
+
+        resources = {
+            "ambulance": 1,
+            "rescue_boat": 0,
+            "rescue_personnel": 2,
+            "emergency_shelter": False
+        }
+
+    else:
+
+        resources = {
+            "ambulance": 0,
+            "rescue_boat": 0,
+            "rescue_personnel": 1,
+            "emergency_shelter": False
+        }
+
+
+    # ==========================================
+    # FINAL RESPONSE
+    # ==========================================
+
+    return {
+        "zone": data.zone,
+        "impact_score": impact_score,
+        "priority": priority,
+        "explanation": reasons,
+        "recommended_resources": resources
+    }
+
+
+# ==========================================
+# HOME ENDPOINT
+# ==========================================
+
+@app.get("/")
+def home():
+
+    return {
+        "message": "FloodCast Response AI API is running"
+    }
+
+
+# ==========================================
+# PREDICTION ENDPOINT
+# ==========================================
+
+@app.post("/predict")
+def predict(data: FloodInput):
+
+    return calculate_impact(data)
+
+
+if __name__ == "__main__":
+    uvicorn.run("backend.main:app", host="127.0.0.1", port=8000, reload=True)
