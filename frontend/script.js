@@ -1,166 +1,157 @@
+const API_URL = "https://floodcast-response-backend.onrender.com";
+
 const analyzeBtn = document.getElementById("analyzeBtn");
 
 analyzeBtn.addEventListener("click", analyzeFlood);
 
-
 async function analyzeFlood() {
 
-    const errorMessage = document.getElementById("errorMessage");
 
-    errorMessage.textContent = "";
+const errorMessage = document.getElementById("errorMessage");
 
-    const data = {
+errorMessage.textContent = "";
 
-        zone: document.getElementById("zone").value,
+const data = {
 
-        flood_severity:
-            Number(document.getElementById("flood_severity").value),
+    zone: document.getElementById("zone").value,
 
-        flood_depth:
-            Number(document.getElementById("flood_depth").value),
+    flood_severity:
+        Number(document.getElementById("flood_severity").value),
 
-        population_density:
-            Number(document.getElementById("population_density").value),
+    flood_depth:
+        Number(document.getElementById("flood_depth").value),
 
-        vulnerability:
-            Number(document.getElementById("vulnerability").value),
+    population_density:
+        Number(document.getElementById("population_density").value),
 
-        critical_infrastructure:
-            Number(document.getElementById("critical_infrastructure").value),
+    vulnerability:
+        Number(document.getElementById("vulnerability").value),
 
-        road_accessibility:
-            Number(document.getElementById("road_accessibility").value)
-    };
+    critical_infrastructure:
+        Number(document.getElementById("critical_infrastructure").value),
 
+    road_accessibility:
+        Number(document.getElementById("road_accessibility").value)
+};
 
-    try {
+try {
 
-        analyzeBtn.textContent = "⏳ ANALYZING...";
+    analyzeBtn.textContent = "⏳ ANALYZING...";
 
-        analyzeBtn.disabled = true;
+    analyzeBtn.disabled = true;
 
+    const response = await fetch(
+        `${API_URL}/predict`,
+        {
+            method: "POST",
 
-        const response = await fetch(
-            "http://127.0.0.1:8000/predict",
-            {
-                method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify(data)
-            }
-        );
-
-
-        if (!response.ok) {
-            throw new Error("Backend request failed");
+            body: JSON.stringify(data)
         }
+    );
 
+    if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Backend error: ${response.status} - ${errorData}`);
+    }
 
-        const result = await response.json();
+    const result = await response.json();
 
+    // Show result section
+    document
+        .getElementById("resultSection")
+        .classList.remove("hidden");
 
-        // Show result section
-        document
-            .getElementById("resultSection")
-            .classList.remove("hidden");
+    // Impact score
+    document.getElementById("impactScore")
+        .textContent = result.impact_score;
 
+    // Priority
+    const priorityElement =
+        document.getElementById("priority");
 
-        // Impact score
-        document.getElementById("impactScore")
-            .textContent = result.impact_score;
+    priorityElement.textContent =
+        result.priority;
 
+    // Priority appearance
+    if (result.priority === "CRITICAL") {
 
-        // Priority
-        const priorityElement =
-            document.getElementById("priority");
+        priorityElement.style.color = "#d62828";
 
-        priorityElement.textContent =
-            result.priority;
+    } else if (result.priority === "HIGH") {
 
+        priorityElement.style.color = "#e76f00";
 
-        // Priority appearance
-        if (result.priority === "CRITICAL") {
+    } else if (result.priority === "MEDIUM") {
 
-            priorityElement.style.color = "#d62828";
+        priorityElement.style.color = "#c99700";
 
-        } else if (result.priority === "HIGH") {
+    } else {
 
-            priorityElement.style.color = "#e76f00";
+        priorityElement.style.color = "#198754";
+    }
 
-        } else if (result.priority === "MEDIUM") {
+    // Explanation
+    const explanation =
+        document.getElementById("explanation");
 
-            priorityElement.style.color = "#c99700";
+    explanation.innerHTML = "";
 
-        } else {
+    result.explanation.forEach(reason => {
 
-            priorityElement.style.color = "#198754";
-        }
+        const li = document.createElement("li");
 
+        li.textContent = "✓ " + reason;
 
-        // Explanation
-        const explanation =
-            document.getElementById("explanation");
+        explanation.appendChild(li);
+    });
 
-        explanation.innerHTML = "";
+    // Emergency resources
+    document.getElementById("ambulance")
+        .textContent =
+        result.recommended_resources.ambulance;
 
-        result.explanation.forEach(reason => {
+    document.getElementById("rescueBoat")
+        .textContent =
+        result.recommended_resources.rescue_boat;
 
-            const li = document.createElement("li");
+    document.getElementById("personnel")
+        .textContent =
+        result.recommended_resources.rescue_personnel;
 
-            li.textContent = "✓ " + reason;
+    document.getElementById("shelter")
+        .textContent =
+        result.recommended_resources.emergency_shelter
+            ? "REQUIRED"
+            : "Not Required";
 
-            explanation.appendChild(li);
+    // Scroll to results
+    document
+        .getElementById("resultSection")
+        .scrollIntoView({
+            behavior: "smooth"
         });
 
+}
 
-        // Resources
-        document.getElementById("ambulance")
-            .textContent =
-            result.recommended_resources.ambulance;
+catch (error) {
 
+    console.error("FloodCast API Error:", error);
 
-        document.getElementById("rescueBoat")
-            .textContent =
-            result.recommended_resources.rescue_boat;
+    errorMessage.textContent =
+        "❌ Cannot connect to FloodCast backend. Please check the backend service and try again.";
 
+}
 
-        document.getElementById("personnel")
-            .textContent =
-            result.recommended_resources.rescue_personnel;
+finally {
 
+    analyzeBtn.textContent = "🔍 ANALYZE FLOOD";
 
-        document.getElementById("shelter")
-            .textContent =
-            result.recommended_resources.emergency_shelter
-                ? "REQUIRED"
-                : "Not Required";
+    analyzeBtn.disabled = false;
+}
 
 
-        // Scroll to results
-        document
-            .getElementById("resultSection")
-            .scrollIntoView({
-                behavior: "smooth"
-            });
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        errorMessage.textContent =
-            "❌ Cannot connect to FloodCast backend. Make sure FastAPI is running.";
-
-    }
-
-    finally {
-
-        analyzeBtn.textContent = "🔍 ANALYZE FLOOD";
-
-        analyzeBtn.disabled = false;
-    }
 }
